@@ -1,9 +1,9 @@
 export function Logo() {
   return (
     <img 
-     src="/MeemLogo.webp" 
+     src="/sera.svg" 
      alt="meem logo" 
-     className="w-8"
+     className="w-6"
     />
   )
 }
@@ -18,11 +18,11 @@ export function LogoWithText() {
   return (
     <div className="flex items-center gap-1">
       <img 
-        src="/MeemLogo.webp" 
+        src="/sera.svg" 
         alt="meem logo" 
-        className="w-8"
+        className="w-6"
        />
-      <p className="text-xl font-bold font-[ClashDisplay]">Sera</p>
+      <p className="text-xl font-bold font-[ClashDisplay] text-green-700">Sera</p>
     </div>
   )
 }

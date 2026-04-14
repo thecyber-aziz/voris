@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Text } from '../components/Logo'
+import { LogoWithText } from '../components/Logo'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { Plus, Settings, Trash, X, PencilLine, Save, Columns2, Square } from 'lucide-react'
 import { useChatStore } from '../context/useChats'
@@ -45,7 +45,7 @@ export default function SideBar() {
         ${isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'} `}
       >
         <div className='px-2 py-2 flex items-center justify-between'>
-          <Text />
+          <LogoWithText />
           <Square 
            strokeWidth={0.8} 
            size={22}  

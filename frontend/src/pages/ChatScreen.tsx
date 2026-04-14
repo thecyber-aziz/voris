@@ -54,7 +54,7 @@ export default function ChatScreen() {
             {activeMessages.map((m, i) => (
               <MessageBubble key={i} messages={m} isStreaming={isLoading && i === activeMessages.length - 1} />
             ))}
-            {isLoading && <span className='animate-pulse'><Logo/></span>}
+            {isLoading && <span className='animate-pulse'><Logo /></span>}
           </div>
         )}
 
