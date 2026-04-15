@@ -163,11 +163,11 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <LogoWithText />
-              <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">© 2025 Sera. All rights reserved.</span>
+              <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">© 2026 Sera. All rights reserved.</span>
             </div>
             <div className="flex gap-6 items-center">
-              <a href="https://github.com/mukhtaransarii" className="text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">github</a>
-              <a href="https://twitter.com/mukhtaransarii" className="text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">twitter</a>
+              <a target="_blank" href="https://github.com/mukhtaransarii" className="text-sm text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Github</a>
+              <a target="_blank" href="https://linkedin.com/in/iibbs" className="text-sm text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Linkedin</a>
               <a href="#" className="text-sm text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Privacy</a>
               <a href="#" className="text-sm text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Terms</a>
               <a href="#" className="text-sm text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Contact</a>

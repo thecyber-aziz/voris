@@ -1,10 +1,10 @@
-import type { Messages } from '../types/messages'
+import type { Messages } from '../types/types'
 
-export const genAiResponse = async ( message: string, history: Messages[], model: string, systemPrompt: string, onChunk: (chunk: string) => void, onError: (error: string) => void ) => {
+export const genAiResponse = async ( message: string, history: Messages[], model: string, systemPrompt: string, apiKey: string | null, onChunk: (chunk: string) => void, onError: (error: string) => void ) => {
   const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, history, model, systemPrompt }),
+    body: JSON.stringify({ message, history, model, systemPrompt, apiKey }),
   });
 
   if (!res.ok) {
@@ -22,3 +22,14 @@ export const genAiResponse = async ( message: string, history: Messages[], model
     onChunk(decoder.decode(value));
   }
 };
+
+export const validateApiKey = async (apiKey: string) => {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/validate-key`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ apiKey }),
+  })
+
+  const data = await res.json().catch(() => ({}))
+  return data
+}

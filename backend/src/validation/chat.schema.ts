@@ -9,7 +9,8 @@ export const chatSchema = z.object({
     })
   ),
   model: z.string().optional(),
-  systemPrompt: z.string().max(5000).optional(),
+  systemPrompt: z.string().max(10000).optional(),
+  apiKey: z.string().nullable().optional()
 });
 
 export type ChatInput = z.infer<typeof chatSchema>;

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Chat, Messages } from '../types/messages'
+import type { Chat, Messages } from '../types/types'
 
 interface ChatStore {
   chats: Chat[]

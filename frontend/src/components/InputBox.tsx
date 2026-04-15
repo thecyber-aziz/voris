@@ -45,7 +45,7 @@ export default function InputBox({ inputValue, setInputValue, handleSend, model,
       </div>
 
       {/* Footer */}
-      <p className="text-xs text-gray-500 text-center py-2">GEN AI can make mistakes, So study hard and make your own better LLM.</p>
+      <p className="text-xs text-gray-500 text-center py-2 font-light"><mark className='text-green-700 bg-transparent'>Sera</mark> can make mistakes, So study hard and make your own better LLM.</p>
     </div>
   )
 }

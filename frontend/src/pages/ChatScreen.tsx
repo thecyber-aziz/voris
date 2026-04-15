@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Messages } from '../types/messages'
+import type { Messages } from '../types/types'
 import MessageBubble from '../components/MessageBubble'
 import { Logo } from '../components/Logo'
 import InputBox from '../components/InputBox'
@@ -12,9 +12,7 @@ import { defaultModel } from '../constants/models'
 export default function ChatScreen() {
   const [inputValue, setInputValue] = useState<string>('');
   const [model, setModel] = useLocalStorage<string>('model', defaultModel);
-  const [systemPrompt] = useLocalStorage<string>('systemPrompt', '')
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const { chats,  createChat, updateChat } = useChatStore();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,9 +33,12 @@ export default function ChatScreen() {
     updateChat(chatId, base)
     setInputValue('')
     setIsLoading(true)
-
+    
+    const apiKey = localStorage.getItem('apiKey') || '';
+    const systemPrompt = localStorage.getItem('systemPrompt') || '';
+ 
     let streamed = ''
-    await genAiResponse(inputValue, activeMessages, model, systemPrompt,
+    await genAiResponse(inputValue, activeMessages, model, systemPrompt, apiKey,
       (chunk) => { streamed += chunk; updateChat(chatId, [...base.slice(0, -1), { role: 'model', content: streamed }]) },
       (err) => updateChat(chatId, [...base, { role: 'model', content: err, type: 'error' }])
     )

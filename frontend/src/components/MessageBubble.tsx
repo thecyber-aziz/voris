@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useState, useEffect, useRef } from 'react'
-import type { Messages } from '../types/messages'
+import type { Messages } from '../types/types'
 
 interface Props {
   messages: Messages
