@@ -1,19 +1,14 @@
 import { ArrowRight, PenLine, Search, HelpCircle, Code2, MessageCircle, Zap, Star, Cpu, Bot, Feather } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-//import { useEffect, useState } from 'react'
 import { LogoWithText } from '../components/Logo'
 
 export default function Home() {
   const navigate = useNavigate()
-  // const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
-  // useEffect(() => {
-  //   const handleMouseMove = (e: MouseEvent) => {
-  //     setMousePosition({ x: e.clientX, y: e.clientY })
-  //   }
-  //   window.addEventListener('mousemove', handleMouseMove)
-  //   return () => window.removeEventListener('mousemove', handleMouseMove)
-  // }, [])
+  const handleContinue = () => {
+    localStorage.setItem("hasVisited", "true")
+    navigate("/chat")
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-50/30 dark:from-emerald-950/20 dark:via-slate-950 dark:to-teal-950/20 font-['ClashDisplay'] overflow-x-hidden">
@@ -38,7 +33,7 @@ export default function Home() {
           </div>
 
           <button
-            onClick={() => navigate('/chat')}
+            onClick={handleContinue}
             className="cursor-pointer flex items-center gap-2 bg-linear-to-r from-emerald-600 to-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-105"
           >
             Start chatting <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -61,7 +56,7 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap animate-fade-in-up animation-delay-300">
             <button
-              onClick={() => navigate('/chat')}
+              onClick={handleContinue}
               className="cursor-pointer group flex items-center gap-2 bg-linear-to-r from-emerald-600 to-green-600 text-white px-7 py-3.5 rounded-xl text-sm font-medium hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-105"
             >
               <MessageCircle size={16} /> New conversation <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -149,7 +144,7 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">Ready to start?</h2>
               <p className="text-emerald-100 mb-8 max-w-md mx-auto">Jump into your first conversation — it only takes a second.</p>
               <button
-                onClick={() => navigate('/chat')}
+                onClick={handleContinue}
                 className="cursor-pointer group inline-flex items-center gap-2 bg-white text-emerald-600 px-7 py-3.5 rounded-xl text-sm font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 Open Sera <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />

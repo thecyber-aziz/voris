@@ -1,6 +1,16 @@
 import type { Messages } from '../types/types'
 
-export const genAiResponse = async ( message: string, history: Messages[], model: string, systemPrompt: string, apiKey: string | null, onChunk: (chunk: string) => void, onError: (error: string) => void, signal?: AbortSignal ) => {
+export const genAiResponse = async ( 
+  message: string, 
+  history: Messages[], 
+  model: string, 
+  systemPrompt: string, 
+  apiKey: string | null, 
+  onChunk: (chunk: string) => void, 
+  onError: (error: string) => void, 
+  signal?: AbortSignal 
+
+) => {
   const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -17,32 +27,36 @@ export const genAiResponse = async ( message: string, history: Messages[], model
   const reader = res.body!.getReader();
   const decoder = new TextDecoder();
 
-  // while (true) {
-  //   const { done, value } = await reader.read();
-  //   if (done) break;
-  //   onChunk(decoder.decode(value));
-  // }
-
   while (true) {
     if (signal?.aborted) {
       reader.cancel();
       break;
     }
-
     const { done, value } = await reader.read();
     if (done) break;
-
     onChunk(decoder.decode(value));
   }
 };
 
+export const getTitle = async (message : string, history : Messages[], model : string, apiKey: string) => {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/title`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, history, model, apiKey })
+  });
+  
+  const data = await res.json();
+  if(!data.success) return console.log(data)
+  return data;
+}
+
+// validate API key
 export const validateApiKey = async (apiKey: string) => {
   const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/validate-key`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ apiKey }),
   })
-
   const data = await res.json().catch(() => ({}))
   return data
 }

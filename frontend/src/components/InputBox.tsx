@@ -7,7 +7,7 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
   useEffect(() => {
     if (!ref.current) return
     ref.current.style.height = 'auto'
-    ref.current.style.height = ref.current.scrollHeight + 'px'
+    ref.current.style.height = Math.min(ref.current.scrollHeight, 10 * 24) + 'px'
   }, [inputValue])
 
   return (
@@ -22,7 +22,7 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
           onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
           placeholder="How can I help you?"
           rows={1}
-          className="w-full focus:outline-none resize-none overflow-hidden"
+          className="w-full focus:outline-none resize-none overflow-y-scroll overflow-hidden font-light"
         />
 
         <div className="mt-3 flex items-center justify-end gap-2">
@@ -39,7 +39,7 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
           <button
             onClick={isLoading ? handleAbort : handleSend}
             className={`rounded-full p-1.5 cursor-pointer hover:bg-zinc-600 disabled:opacity-50 ${
-              isLoading ? 'bg-red-500' : 'bg-black'
+              isLoading ? 'bg-green-700' : 'bg-black'
             }`}
             disabled={!inputValue && !isLoading}
           >

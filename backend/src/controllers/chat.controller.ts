@@ -1,25 +1,19 @@
 import { Request, Response } from "express";
 import { GoogleGenAI } from "@google/genai";
-import { chatSchema } from "../validation/chat.schema";
+import { chatSchema, titleSchema } from "../validation/chat.schema";
 
+// chat
 export const chatController = async (req: Request, res: Response) => {
   try {
     const result = chatSchema.safeParse(req.body);
     if (!result.success) return res.status(400).json({ success: false, message: result.error.issues[0].message });
 
     const { message, history, model, systemPrompt, apiKey } = result.data;
-    const finalApiKey = apiKey || process.env.GEMINI_API_KEY;
-
-    // console.log("apiKey",apiKey)
-    // console.log("finalApiKey",finalApiKey)
+    const ai = new GoogleGenAI({ apiKey: apiKey || process.env.GEMINI_API_KEY });
     
-    const ai = new GoogleGenAI({ apiKey: finalApiKey });
-    
-    // if Model is GEMINI set systemInstruction and tools, else {}
     let config = {};
-    const isGEMINI = model?.split("-")[0] === "gemini";
-    if(isGEMINI) config = { systemInstruction: systemPrompt, tools: [{ googleSearch: {} }] }
-
+    if(model?.startsWith("gemini")) config = { systemInstruction: systemPrompt, tools: [{ googleSearch: {} }] }
+    
     const stream = await ai.models.generateContentStream({
       model: model ?? "gemini-2.5-flash-lite",
       config,
@@ -28,7 +22,7 @@ export const chatController = async (req: Request, res: Response) => {
         { role: "user", parts: [{ text: message }] },
       ],
     });
-
+    
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.flushHeaders();
 
@@ -41,6 +35,30 @@ export const chatController = async (req: Request, res: Response) => {
   }
 };
 
+// gen title 
+export const genTitle = async (req: Request, res: Response) => {
+  try {
+      const result = titleSchema.safeParse(req.body);
+      if (!result.success) return res.status(400).json({ success: false, message: result.error.issues[0].message });
+
+      const { message,  history, model, apiKey } = result.data;
+      if(history.length !== 0) return res.status(400).json({ success: false, message: "Title can only be generated for a new message" });
+
+      const ai = new GoogleGenAI({ apiKey: apiKey || process.env.GEMINI_API_KEY });
+
+      const data = await ai.models.generateContent({
+        model: model ?? "gemini-2.5-flash-lite",
+        contents: [{ role: "user", parts: [{ text: `Create a short 3-5 word title for the message below. Do NOT reuse words like "title", "generate", or anything from this instruction. Return only the title Message: ${message}`}] }]
+      })
+      
+      const title = (data.text || "").trim().replace(/["']/g, '').replace(/^(title:|here.*?:)/i, '').split('\n')[0].trim();
+      res.json({ success: true, title });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+}
+
+// validate API key
 export const validateKey = async (req: Request, res: Response) => {
   try {
     const { apiKey } = req.body;

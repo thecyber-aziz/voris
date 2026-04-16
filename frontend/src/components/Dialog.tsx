@@ -43,19 +43,49 @@ export default function Dialog() {
     }
   }
 
+  const PROMPT_SUGGESTIONS = [
+    "You are an AI assistant, but you always reply only: 'I am Groot.' no matter what.",
+    "You are a sarcastic AI. Always answer with witty and savage humor.",
+    "You are a funny AI comedian. Every response must include a joke.",
+    "You are an overconfident expert who explains everything like it's obvious.",
+    "You are a lazy AI. Give the shortest possible answers, even if incomplete.",
+    "You are a dramatic storyteller. Answer everything like an epic movie scene.",
+    "You are a Gen-Z AI. Use slang, emojis, and casual tone.",
+    "You are a brutally honest AI. No sugarcoating, only truth.",
+    "You are a teacher who explains everything like the user is 5 years old.",
+    "You are an AI that always doubts the question before answering."
+  ];
+
   return (
     <>
      {/* System Prompt Dialog */}
      <DialogWrapper title="System Prompt" params="systemPrompt"> 
         <textarea 
-         placeholder="System Prompt"
+         placeholder="Write Your Custom System Prompt..."
+         rows={5}
          value={temp.systemPrompt ?? systemPrompt}
          onChange={(e) => setTemp({ ...temp, systemPrompt: e.target.value })} 
          className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none resize-none focus:ring-1 focus:ring-black"
         />
         <div className="flex items-center justify-end gap-3">
           <button onClick={cancelDialog} className="cursor-pointer text-xs bg-gray-50 px-4 py-2 rounded-lg hover:bg-gray-100">Cancel</button>
-          <button onClick={saveDialog} className="cursor-pointer text-xs bg-black text-white px-4 py-2 rounded-lg">Save</button>
+          <button onClick={saveDialog} className="cursor-pointer text-xs bg-green-700 text-white px-4 py-2 rounded-lg">Save</button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {PROMPT_SUGGESTIONS.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => setTemp({ ...temp, systemPrompt: s })}
+              className={`text-xs px-2 py-1 rounded cursor-pointer w-full ${
+                (temp.systemPrompt ?? systemPrompt) === s
+                  ? 'bg-green-700 text-white'
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              {s}
+            </button>
+          ))}
         </div>
       </DialogWrapper>
       
@@ -78,7 +108,7 @@ export default function Dialog() {
         {apiError && <p className="text-xs text-red-500">{apiError}</p> }
         <div className="flex items-center justify-end gap-3">
           <button onClick={cancelDialog} className="cursor-pointer text-xs bg-gray-50 px-4 py-2 rounded-lg hover:bg-gray-100">Cancel</button>
-          <button onClick={saveDialog} className="cursor-pointer text-xs bg-black text-white px-4 py-2 rounded-lg">Save</button>
+          <button onClick={saveDialog} className="cursor-pointer text-xs bg-green-700 text-white px-4 py-2 rounded-lg">Save</button>
         </div>
       </DialogWrapper>
     </>

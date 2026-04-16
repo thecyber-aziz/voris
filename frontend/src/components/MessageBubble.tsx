@@ -1,27 +1,37 @@
+import { useState, useEffect, useRef, memo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { useState, useEffect, useRef } from 'react'
 import type { Messages } from '../types/types'
+import { Copy, CopyCheck } from 'lucide-react'
+import { Logo} from '../components/Logo'
 
 interface Props {
   messages: Messages
   isStreaming?: boolean
 }
 
-export default function MessageBubble( { messages, isStreaming }: Props ) {
+function MessageBubble( { messages, isStreaming } : Props) {
   const isUser = messages.role === 'user';
   const isError = messages?.type === 'error';
   const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isStreaming) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages.content, isStreaming])
+  const [isCopied, setIsCopied] = useState(false);
   
   useEffect(() => {
-    if (!isStreaming) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
+    if (!bottomRef.current) return
+    bottomRef.current.scrollIntoView({ behavior: isStreaming ? 'smooth' : 'auto',})
+  }, [messages.content, isStreaming])
+  
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(messages.content)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (err) {
+      console.error("Copy failed")
+    }
+  }
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} my-2`}>
@@ -37,16 +47,30 @@ export default function MessageBubble( { messages, isStreaming }: Props ) {
               const code = String(children).replace(/\n$/, '')
               return match
                 ? <CodeBlock language={match[1]} code={code} />
-                : <code className="bg-gray-100 text-rose-600 px-1.5 py-0.5 rounded text-xs font-mono">{children}</code>
+                : <code className="bg-gray-100 text-black px-1.5 py-0.5 rounded text-xs font-mono">{children}</code>
             },
-          }}>{messages.content}</ReactMarkdown>
-          <div ref={bottomRef} />  {/* 👈 anchor scrolls here on each chunk */}
+          }}>
+            {messages.content}
+          </ReactMarkdown>
+
+          {/* Actions */}
+          {!isStreaming &&
+            <div className='flex flex-col'>
+              {!isCopied && <Copy onClick={handleCopy} size={24} strokeWidth={0.8} className='p-1 rounded hover:bg-gray-100 cursor-pointer'/>}
+              {isCopied && <CopyCheck size={24} strokeWidth={0.8} className='p-1 rounded hover:bg-gray-100 cursor-pointer'/>}
+              
+              <Logo/>
+            </div>
+          }
+
+          <div ref={bottomRef} />
         </div>
       )}
     </div>
   )
 }
 
+export default memo(MessageBubble);
 
 
 function CodeBlock({ language, code }: { language: string; code: string }) {

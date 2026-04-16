@@ -42,7 +42,7 @@ export default function SideBar() {
         ${isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'} `}
       > 
         {/* Logo */}
-        <div className='px-2 py-2 flex items-center justify-between'>
+        <div className='px-2 py-2 flex items-center justify-between cursopr-pointer' onClick={() => navigate('/home')}>
           <LogoWithText />
           <Square 
            strokeWidth={0.8} 

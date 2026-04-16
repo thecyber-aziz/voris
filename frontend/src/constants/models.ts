@@ -1,6 +1,3 @@
-export const defaultModel = "gemini-2.5-flash-lite";
-
-
 // NOTE: do not change values, bcz its model of gemini api not random value
 export const MODELS = [
   // Gemma Models
@@ -21,3 +18,5 @@ export const MODELS = [
   // { label: "Gemini 2.0 Pro",          value: "gemini-2.0-pro",         rpm: 20, rpd: 96000 }, // Gemini
   // { label: "Gemini Nano",             value: "gemini-nano",            rpm: 70, rpd: 336000 }, // Gemini - Very fast, smaller model
 ];
+
+export const defaultModel = "gemini-2.5-flash-lite";
