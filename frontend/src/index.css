@@ -28,3 +28,9 @@
 .animate-breathe {
   animation: breathe 1.2s ease-in-out infinite;
 }
+
+.tooltip {
+  @apply absolute left-full top-1/2 -translate-y-1/2 ml-2
+   text-xs bg-black text-white px-2 py-1 rounded 
+   opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none;
+}

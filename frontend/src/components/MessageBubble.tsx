@@ -59,7 +59,7 @@ function MessageBubble( { messages, isStreaming } : Props) {
               {!isCopied && <Copy onClick={handleCopy} size={24} strokeWidth={0.8} className='p-1 rounded hover:bg-gray-100 cursor-pointer'/>}
               {isCopied && <CopyCheck size={24} strokeWidth={0.8} className='p-1 rounded hover:bg-gray-100 cursor-pointer'/>}
               
-              <Logo/>
+               <Logo/>
             </div>
           }
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { MODELS } from '../constants/models'
+import { Trash } from 'lucide-react'
 
 export default function InputBox({ inputValue, setInputValue, handleSend, handleAbort, model, setModel, activeMessages, isLoading }: any) {
   const ref = useRef<HTMLTextAreaElement>(null)
@@ -26,33 +27,38 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
         />
 
         <div className="mt-3 flex items-center justify-end gap-2">
-          <select
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            className="text-xs text-gray-500 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none cursor-pointer"
-          >
-            {MODELS.map((m) => (
-              <option key={m.value} value={m.value}>{m.label} — RPM {m.rpm} · RPD {m.rpd}</option>
-            ))}
-          </select>
+          {/* <div className="relative group flex items-center gap-2 px-2 py-1 text-xs text-gray-500 border border-gray-200 rounded-lg p-0.5 focus:outline-none cursor-pointer">
+            <img src="pfp.png" alt="pfp" className="w-5 h-5 rounded-full"/>
+            <span className='tooltip'>Search About Developer.</span>
+          </div> */}
 
-          <button
-            onClick={isLoading ? handleAbort : handleSend}
-            className={`rounded-full p-1.5 cursor-pointer hover:bg-zinc-600 disabled:opacity-50 ${
-              isLoading ? 'bg-green-700' : 'bg-black'
-            }`}
-            disabled={!inputValue && !isLoading}
-          >
-            {isLoading ? (
-              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="size-4 text-white">
-                <rect x="6" y="6" width="12" height="12" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-white">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-              </svg>
-            )}
-          </button>
+          <div className='flex items-center gap-2'>
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="text-xs text-gray-500 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none cursor-pointer"
+            >
+              {MODELS.map((m) => <option key={m.value} value={m.value}>{m.label}</option> )}
+            </select>
+
+            <button
+              onClick={isLoading ? handleAbort : handleSend}
+              className={`rounded-full p-1.5 cursor-pointer hover:bg-zinc-600 disabled:opacity-50 ${
+                isLoading ? 'bg-green-700' : 'bg-black'
+              }`}
+              disabled={!inputValue && !isLoading}
+            >
+              {isLoading ? (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="size-4 text-white">
+                  <rect x="6" y="6" width="12" height="12" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-white">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
