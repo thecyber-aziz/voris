@@ -13,6 +13,10 @@
 
 ---
 
+Here's the updated sections:
+
+---
+
 ## Features
 
 | | Feature | Description |
@@ -23,16 +27,10 @@
 | ⏹ | **Abort / stop** | Cancel any in-flight generation mid-stream, input reverts to send mode instantly |
 | ⌘ | **Custom API key** | Paste your own Gemini key via dialog — includes a direct link to create one |
 | ◈ | **New user homescreen** | Onboarding screen shown only on first visit, skips to chat on return |
-
----
-
-## Tech Stack
-
-**Frontend**
-`React` `TypeScript` `Zustand` `Tailwind CSS` `Vite`
-
-**Backend**
-`Node.js` `Express` `TypeScript` `Gemini API` `Zod`
+| ⊕ | **Auth & guest mode** | Full signup/login flow — guests get a UUID session, users persist chats to DB |
+| ⊟ | **Chat management** | Rename or delete any chat inline from the sidebar with instant optimistic update |
+| ⇄ | **Persistent history** | Logged-in users load chats from DB on return; guests keep history in localStorage |
+| ◎ | **Model selector** | Switch Gemini models per session, saved to localStorage across refreshes |
 
 ---
 
@@ -41,15 +39,43 @@
 ```
 Sera/
 ├── backend/
-│   ├── src/controllers/     # chatController, validateKey
-│   ├── src/validation/      # zod schemas
+│   ├── src/controllers/
+│   │   ├── chat.controller.ts   # createNewChat, chatController, fetchAllChats
+│   │   │                        # saveChat, deleteChat, renameChat
+│   │   └── auth.controller.ts   # signup, login, logout, me
+│   ├── src/models/
+│   │   ├── chat.model.ts
+│   │   └── user.model.ts
+│   ├── src/validation/          # zod schemas
+│   ├── src/middleware/          # authMiddleware, optionalAuth
 │   └── src/routes/
 ├── frontend/
-│   ├── src/components/      # chat, dialog, homescreen
-│   ├── src/store/           # zustand state
-│   └── src/pages/           # /chat, /chat/:id
+│   ├── src/components/          # MessageBubble, InputBox, SideBar, Dialog, Logo
+│   ├── src/context/
+│   │   ├── useChatStore.ts      # zustand — chats, streaming, sendMessage, loadChat
+│   │   └── useAuth.ts           # zustand — user, login, signup, logout, me
+│   ├── src/config/
+│   │   ├── api.chat.ts          # createNewChat, genAiResponse, fetchAllChats, saveChat
+│   │   └── api.auth.ts          # login, signup, logout, me
+│   ├── src/pages/
+│   │   ├── ChatScreen.tsx       # /chat and /chat/:id
+│   │   ├── Login.tsx
+│   │   ├── Signup.tsx
+│   │   ├── Home.tsx             # first visit onboarding
+│   │   └── HomeReset.tsx
+│   ├── src/types/               # shared TypeScript types
+│   ├── src/constants/           # models list, defaults
+│   └── src/hooks/               # useLocalStorage
 └── README.md
 ```
+
+## Tech Stack
+
+**Frontend**
+`React` `TypeScript` `Zustand` `Tailwind CSS` `Vite`
+
+**Backend**
+`Node.js` `Express` `TypeScript` `Gemini API` `Zod`
 
 ---
 
