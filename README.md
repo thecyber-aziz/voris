@@ -96,6 +96,8 @@ npm install
 Create `.env`:
 ```env
 GEMINI_API_KEY=your_key_here
+MONGO_URI=your-mongodb_uri
+JWT_SECRET=your_jwt_secret
 PORT=3000
 NODE_ENV=development
 ```
