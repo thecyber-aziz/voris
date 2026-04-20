@@ -17,20 +17,23 @@ Here's the updated sections:
 
 ---
 
+```markdown
 ## Features
 
 | | Feature | Description |
 |---|---|---|
 | ⌗ | **Per-chat routing** | Each conversation gets its own `/chat/:id` — shareable, navigable, state-isolated |
-| ✦ | **AI-generated titles** | Gemini auto-names chats on the first message, streamed back inline |
+| ✦ | **AI-generated titles** | Auto-names chats on first message using a fast LLM call, silently falls back to "New Chat" |
 | ⬡ | **System prompt** | Customise AI persona per session with prebuilt suggestions or write your own |
 | ⏹ | **Abort / stop** | Cancel any in-flight generation mid-stream, input reverts to send mode instantly |
-| ⌘ | **Custom API key** | Paste your own Gemini key via dialog — includes a direct link to create one |
+| ⌘ | **Multi API key manager** | Save multiple Groq keys with labels, validate on add, switch active key anytime |
 | ◈ | **New user homescreen** | Onboarding screen shown only on first visit, skips to chat on return |
 | ⊕ | **Auth & guest mode** | Full signup/login flow — guests get a UUID session, users persist chats to DB |
-| ⊟ | **Chat management** | Rename or delete any chat inline from the sidebar with instant optimistic update |
+| ⊟ | **Chat management** | Rename or delete any chat via `...` dropdown in sidebar with instant optimistic update |
 | ⇄ | **Persistent history** | Logged-in users load chats from DB on return; guests keep history in localStorage |
-| ◎ | **Model selector** | Switch Gemini models per session, saved to localStorage across refreshes |
+| ◎ | **Model selector** | Switch between Groq models per session, saved to localStorage across refreshes |
+| ⚡ | **Groq-powered** | Runs on Groq's inference API — ultra-fast streaming with models like Llama, Mixtral, Qwen |
+| ◐ | **BYOK** | Bring your own Groq API key — your key, your quota, your usage |
 
 ---
 
@@ -39,9 +42,12 @@ Here's the updated sections:
 ```
 Sera/
 ├── backend/
+│   ├── src/ai/
+│   │   ├── groq.ts              # groqStream — streaming handler
+│   │   └── index.ts             # streamAI — provider switch (swap LLM here)
 │   ├── src/controllers/
 │   │   ├── chat.controller.ts   # createNewChat, chatController, fetchAllChats
-│   │   │                        # saveChat, deleteChat, renameChat
+│   │   │                        # saveChatMessages, deleteChatController, renameChatController
 │   │   └── auth.controller.ts   # signup, login, logout, me
 │   ├── src/models/
 │   │   ├── chat.model.ts
@@ -52,19 +58,20 @@ Sera/
 ├── frontend/
 │   ├── src/components/          # MessageBubble, InputBox, SideBar, Dialog, Logo
 │   ├── src/context/
-│   │   ├── useChatStore.ts      # zustand — chats, streaming, sendMessage, loadChat
-│   │   └── useAuth.ts           # zustand — user, login, signup, logout, me
+│   │   ├── useChatStore.ts      # zustand — chats, streaming, newChatId, sendMessage, loadChat
+│   │   └── useAuth.ts           # zustand — user, loading, login, signup, logout, me
 │   ├── src/config/
 │   │   ├── api.chat.ts          # createNewChat, genAiResponse, fetchAllChats, saveChat
+│   │   │                        # deleteChatApi, renameChatApi, validateApiKey
 │   │   └── api.auth.ts          # login, signup, logout, me
 │   ├── src/pages/
-│   │   ├── ChatScreen.tsx       # /chat and /chat/:id
+│   │   ├── ChatScreen.tsx       # /chat and /chat/:id — URL is source of truth
 │   │   ├── Login.tsx
 │   │   ├── Signup.tsx
 │   │   ├── Home.tsx             # first visit onboarding
 │   │   └── HomeReset.tsx
 │   ├── src/types/               # shared TypeScript types
-│   ├── src/constants/           # models list, defaults
+│   ├── src/constants/           # Groq models list, defaultModel, defaultSystemPrompt
 │   └── src/hooks/               # useLocalStorage
 └── README.md
 ```
@@ -91,31 +98,6 @@ Sera/
 ```bash
 cd backend
 npm install
-```
-
-Create `.env`:
-```env
-GEMINI_API_KEY=your_key_here
-MONGO_URI=your-mongodb_uri
-JWT_SECRET=your_jwt_secret
-PORT=3000
-NODE_ENV=development
-```
-
-```bash
-npm run dev
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-```
-
-Create `.env`:
-```env
-VITE_BACKEND_URI=http://localhost:3000
 ```
 
 ```bash
