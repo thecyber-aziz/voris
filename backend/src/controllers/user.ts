@@ -3,6 +3,7 @@ import User from '../models/user';
 import { loginSchema, singupSchema } from '../validation/user';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { admin, firebaseInitialized } from '../config/firebase';
 
 // signup
 export const signup = async (req: Request, res: Response) => {
@@ -55,6 +56,70 @@ export const login = async (req: Request, res: Response) => {
 
   } catch (error:any) {
     return res.status(500).json({success: false, message: 'something went wrong', error: error.message})
+  }
+}
+
+// google login
+export const googleLogin = async (req: Request, res: Response) => {
+  try {
+    const { idToken, email, name, profilePhoto } = req.body;
+    
+    if (!idToken || !email) {
+      return res.status(400).json({ success: false, message: "Missing required fields (idToken, email)" });
+    }
+
+    // Try to verify Firebase ID token if initialized, otherwise skip verification for dev
+    if (firebaseInitialized) {
+      try {
+        await admin.auth().verifyIdToken(idToken);
+      } catch (error) {
+        return res.status(401).json({ success: false, message: "Invalid Firebase token" });
+      }
+    } else {
+      // For development only - when Firebase isn't fully configured
+      console.warn('Firebase not initialized - skipping token verification. Only use in development!');
+    }
+    
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user with Google account (no password)
+      user = new User({
+        name: name || email,
+        email,
+        password: null, // Google users don't need a password
+        profilePhoto: profilePhoto || undefined // Store Google profile photo
+      });
+      await user.save();
+    } else if (profilePhoto && !user.profilePhoto) {
+      // Update profile photo if user exists but doesn't have one
+      user.profilePhoto = profilePhoto;
+      await user.save();
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '7d' });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: false, // true in production (HTTPS)
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    })
+    .status(200).json({ 
+      success: true, 
+      message: 'Google login successful', 
+      user: { _id: user._id, name: user.name, email: user.email, profilePhoto: user.profilePhoto }
+    });
+
+  } catch (error: any) {
+    console.error('Google login error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Google login failed', 
+      error: error.message 
+    });
   }
 }
 

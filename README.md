@@ -1,4 +1,4 @@
-<div align="center">
+<!-- <div align="center">
 
 # Sera
 
@@ -152,4 +152,4 @@ No license currently assigned. Contact maintainer before reuse.
 
 Built by [Mukhtar Ansari](https://github.com/mukhtaransarii)
 
-</div>
+</div> -->

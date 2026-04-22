@@ -36,6 +36,7 @@ export type User = {
   _id: string
   name: string
   email: string
+  profilePhoto?: string
 }
 
 export type AuthState = {
@@ -44,6 +45,7 @@ export type AuthState = {
 
   signup: (name: string, email: string, password: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
+  googleLogin: (idToken: string, user: { email: string; name: string; photoURL?: string }) => Promise<void>
   logout: () => Promise<void>
   me: () => Promise<void>
 }

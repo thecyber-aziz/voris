@@ -36,9 +36,24 @@
 
 /* Tooltip */
 .tooltip {
-  @apply absolute left-full top-1/2 -translate-y-1/2 ml-2
-   text-xs bg-black text-white px-2 py-1 rounded 
-   opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none;
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  background-color: black;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.group:hover .tooltip {
+  opacity: 1;
 }
 
 /* Auth text animation */

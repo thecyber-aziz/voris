@@ -56,6 +56,31 @@ export const logout = async () => {
   }
 }
 
+// googleLogin
+export const googleLogin = async (idToken: string, user: { email: string; name: string; photoURL?: string }) => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/auth/google-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ 
+        idToken, 
+        email: user.email, 
+        name: user.name,
+        profilePhoto: user.photoURL
+      }),
+    });
+
+    const data = await res.json();
+    console.log(data)
+    
+    if(!data.success) return 
+    return data
+  } catch (error) {
+    console.log("something went wrong", error);
+  }
+}
+
 // me
 export const me = async () => {
   try {

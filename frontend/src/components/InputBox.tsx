@@ -49,7 +49,7 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
             <button
               onClick={isLoading ? handleAbort : handleSend}
               className={`rounded-full p-1.5 cursor-pointer hover:bg-zinc-600 disabled:opacity-50 ${
-                isLoading ? 'bg-green-700' : 'bg-black'
+                isLoading ? 'bg-black' : 'bg-black'
               }`}
               disabled={!inputValue && !isLoading}
             >
@@ -68,7 +68,7 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
       </div>
 
       {/* Footer */}
-      <p className="text-xs text-gray-500 text-center py-2 font-light"><mark className='text-green-700 bg-transparent'>Sera</mark> can make mistakes, So study hard and make your own better LLM.</p>
+      <p className="text-xs text-gray-500 text-center py-2 font-light"><mark className='text-black bg-transparent'>Voris</mark> can make mistakes, So study hard and make your own better LLM.</p>
     </div>
   )
 }

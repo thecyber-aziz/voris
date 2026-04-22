@@ -41,13 +41,13 @@ export default function SideBar() {
     },
     {
       name: hasSystemPrompt ? 'System Prompt Active' : 'System Prompt',
-      icon: <Settings strokeWidth={0.8} size={16} className={hasSystemPrompt ? 'text-green-700' : ''} />,
+      icon: <Settings strokeWidth={0.8} size={16} className={hasSystemPrompt ? 'text-black' : ''} />,
       badge: hasSystemPrompt,
       action: () => { setIsMobileNavOpen(false); setSearchParams({ dialog: 'systemPrompt' }) }
     },
     {
       name: hasApiKey ? 'API Key Active' : 'Add API Key',
-      icon: <KeyRound strokeWidth={0.8} size={16} className={hasApiKey ? 'text-green-700' : ''} />,
+      icon: <KeyRound strokeWidth={0.8} size={16} className={hasApiKey ? 'text-black' : ''} />,
       badge: hasApiKey,
       action: () => { setIsMobileNavOpen(false); setSearchParams({ dialog: 'apiKey' }) }
     },
@@ -78,7 +78,7 @@ export default function SideBar() {
         <div className='px-2 py-2 flex items-center justify-between'>
           <div onClick={() => navigate('/home')} className='relative group cursor-pointer'>
             <LogoWithText />
-            <span className="tooltip">Sera - Your Personal AI Assistant</span>
+            <span className="tooltip">Voris - Your Personal AI Assistant</span>
           </div>
           <Square strokeWidth={0.8} size={22} className='block md:hidden' onClick={() => setIsMobileNavOpen(false)} />
         </div>
@@ -92,10 +92,10 @@ export default function SideBar() {
               className="w-full flex items-center gap-2 font-light text-sm hover:bg-gray-100 p-2 rounded cursor-pointer"
             >
               {option.icon}
-              <span className={option.badge ? 'text-green-600 font-medium flex-1 text-left' : 'flex-1 text-left'}>
+              <span className={option.badge ? 'text-black font-medium flex-1 text-left' : 'flex-1 text-left'}>
                 {option.name}
               </span>
-              {option.badge && <CheckCircle strokeWidth={1.5} size={14} className="text-green-600 shrink-0" />}
+              {option.badge && <CheckCircle strokeWidth={1.5} size={14} className="text-black shrink-0" />}
             </button>
           ))}
         </div>
@@ -172,16 +172,38 @@ export default function SideBar() {
 
         {/* Logout */}
         {user && (
-          <div className='relative group'>
+          <div className='flex flex-col gap-3'>
+            {/* User Profile */}
+            <div className='flex items-center gap-3 bg-white border border-gray-200 rounded-lg p-3'>
+              <div className='relative'>
+                {user.profilePhoto ? (
+                  <img 
+                    src={user.profilePhoto} 
+                    alt={user.name}
+                    className='w-10 h-10 rounded-full object-cover'
+                  />
+                ) : (
+                  <div className='w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm'>
+                    {user.name?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
+                <div className='absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white'></div>
+              </div>
+              <div className='flex-1'>
+                <p className='text-sm font-medium text-black truncate'>{user.name}</p>
+                <p className='text-xs text-gray-500 truncate'>{user.email}</p>
+              </div>
+            </div>
+
             <button
               onClick={logout}
               className="w-full flex items-center gap-2 font-light text-sm hover:bg-red-100 p-2 rounded cursor-pointer"
             >
               <LogOut strokeWidth={1} size={16} color="red" /> Logout
             </button>
-            <span className="tooltip">😭 Please don't Logout</span>
           </div>
         )}
+
       </aside>
 
       <Dialog />

@@ -98,7 +98,7 @@ export default function Dialog() {
         />
         <div className="flex items-center justify-end gap-3">
           <button onClick={cancelDialog} className="cursor-pointer text-xs bg-gray-50 px-4 py-2 rounded-lg hover:bg-gray-100">Cancel</button>
-          <button onClick={saveSystemPrompt} className="cursor-pointer text-xs bg-green-700 text-white px-4 py-2 rounded-lg">Save</button>
+          <button onClick={saveSystemPrompt} className="cursor-pointer text-xs bg-black text-white px-4 py-2 rounded-lg">Save</button>
         </div>
         <div className="grid grid-cols-2 gap-2">
           {PROMPT_SUGGESTIONS.map((s, i) => (
@@ -106,7 +106,7 @@ export default function Dialog() {
               key={i}
               onClick={() => setTemp({ ...temp, systemPrompt: s })}
               className={`text-xs px-2 py-1 rounded cursor-pointer w-full text-left ${
-                (temp.systemPrompt ?? systemPrompt) === s ? 'bg-green-700 text-white' : 'bg-gray-100 hover:bg-gray-200'
+                (temp.systemPrompt ?? systemPrompt) === s ? 'bg-black text-white' : 'bg-gray-100 hover:bg-gray-200'
               }`}
             >
               {s}
@@ -141,16 +141,16 @@ export default function Dialog() {
                 onClick={() => handleSelectKey(entry.key)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-all ${
                   activeKey === entry.key
-                    ? 'border-green-500 bg-green-50'
+                    ? 'border-black bg-green-50'
                     : 'border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-medium ${activeKey === entry.key ? 'text-green-700' : 'text-gray-700'}`}>{entry.label}</p>
+                  <p className={`text-xs font-medium ${activeKey === entry.key ? 'text-black' : 'text-gray-700'}`}>{entry.label}</p>
                   <p className="text-xs text-gray-400 truncate font-mono">{entry.key.slice(0, 8)}...{entry.key.slice(-4)}</p>
                 </div>
                 
-                {activeKey === entry.key && <CheckCircle size={14} className="text-green-600 shrink-0" />}
+                {activeKey === entry.key && <CheckCircle size={14} className="text-black shrink-0" />}
 
                 <button
                   onClick={(e) => { e.stopPropagation(); handleDeleteKey(entry.key) }}
@@ -173,16 +173,16 @@ export default function Dialog() {
               placeholder="Label (optional)"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
-              className="w-full text-sm  border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-green-700"
+              className="w-full text-sm  border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
             />
             <input
               type="text"
               placeholder="gsk_..."
               value={newKey}
               onChange={(e) => { setNewKey(e.target.value); setKeyStatus('idle'); setKeyError('') }}
-              className={`w-full text-sm  border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-green-700 ${
+              className={`w-full text-sm  border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black ${
                 keyStatus === 'error' ? 'border-red-400 focus:ring-red-400' :
-                keyStatus === 'success' ? 'border-green-400 focus:ring-green-400' :
+                keyStatus === 'success' ? 'border-black focus:ring-black' :
                 'border-gray-200 focus:ring-black'
               }`}
             />
@@ -194,7 +194,7 @@ export default function Dialog() {
               </div>
             )}
             {keyStatus === 'success' && (
-              <div className="flex items-center gap-1.5 text-xs text-green-600">
+              <div className="flex items-center gap-1.5 text-xs text-black">
                 <CheckCircle size={13} /> API key validated and saved!
               </div>
             )}
@@ -209,7 +209,7 @@ export default function Dialog() {
               <button
                 onClick={handleAddKey}
                 disabled={keyStatus === 'loading' || !newKey.trim()}
-                className="flex-1 text-xs bg-green-700 text-white p-3 rounded-lg hover:bg-green-800 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1"
+                className="flex-1 text-xs bg-black text-white p-3 rounded-lg hover:bg-black disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1"
               >
                 {keyStatus === 'loading' ? <><Loader size={12} className="animate-spin" /> Validating...</> : 'Validate & Save'}
               </button>
@@ -244,7 +244,7 @@ function DialogWrapper({ title, note, children, params }: any) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/5 backdrop-blur-xs">
       <div className="relative w-full max-w-md bg-white rounded-xl shadow-lg p-4 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
         <div>
-          <h2 className="text-xl font-bold font-[ClashDisplay] text-green-700">{title}</h2>
+          <h2 className="text-xl font-bold font-[ClashDisplay] text-black">{title}</h2>
           {note && <p className="text-xs text-gray-500">{note}</p>}
         </div>
         {children}

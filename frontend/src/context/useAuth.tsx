@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { login, logout, signup, me } from "../config/api.auth"
+import { login, logout, signup, me, googleLogin } from "../config/api.auth"
 import type { AuthState } from '../types/types'
 import { useChatStore } from '../context/useChat'
 
@@ -20,6 +20,14 @@ export const useAuth = create<AuthState>((set) => ({
     set({ loading: true })
 
     const data = await login(email, password);
+    if (!data) return set({ loading: false })
+    set({ user: data.user, loading: false })
+  },
+
+  googleLogin: async (idToken, user) => {
+    set({ loading: true })
+
+    const data = await googleLogin(idToken, user);
     if (!data) return set({ loading: false })
     set({ user: data.user, loading: false })
   },
