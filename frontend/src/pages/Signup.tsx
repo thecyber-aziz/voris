@@ -46,17 +46,9 @@ export default function Signup() {
 
   const handleSignup = async () => {
     if (!validateForm()) return
-
-    try {
-      const result = await signup(name, email, password)
-      if (result?.success) {
-        navigate('/chat')
-      } else if (result?.message) {
-        setErrors({ general: result.message })
-      }
-    } catch (error: any) {
-      const errorMessage = error?.message || 'Signup failed'
-      setErrors({ general: errorMessage })
+    const success = await signup(name, email, password)
+    if (success) {
+      navigate('/chat')
     }
   }
 
@@ -66,13 +58,13 @@ export default function Signup() {
       const user = result.user
       const idToken = await user.getIdToken()
       
-      const response = await googleLogin(idToken, {
+      const success = await googleLogin(idToken, {
         email: user.email || "",
         name: user.displayName || user.email || "",
         photoURL: user.photoURL || undefined
       })
       
-      if (response?.success) {
+      if (success) {
         navigate('/chat')
       }
     } catch (error) {

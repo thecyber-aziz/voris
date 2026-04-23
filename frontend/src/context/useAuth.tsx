@@ -12,24 +12,27 @@ export const useAuth = create<AuthState>((set) => ({
     set({ loading: true })
 
     const data = await signup(name, email, password);
-    if (!data) return set({ loading: false })
+    if (!data) return set({ loading: false }), false
     set({ user: data.user, loading: false })
+    return true
   },
 
   login: async (email, password) => {
     set({ loading: true })
 
     const data = await login(email, password);
-    if (!data) return set({ loading: false })
+    if (!data) return set({ loading: false }), false
     set({ user: data.user, loading: false })
+    return true
   },
 
   googleLogin: async (idToken, user) => {
     set({ loading: true })
 
     const data = await googleLogin(idToken, user);
-    if (!data) return set({ loading: false })
+    if (!data) return set({ loading: false }), false
     set({ user: data.user, loading: false })
+    return true
   },
 
   logout: async () => {

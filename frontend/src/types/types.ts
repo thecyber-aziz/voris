@@ -44,9 +44,9 @@ export type AuthState = {
   user: User | null
   loading: boolean
 
-  signup: (name: string, email: string, password: string) => Promise<void>
-  login: (email: string, password: string) => Promise<void>
-  googleLogin: (idToken: string, user: { email: string; name: string; photoURL?: string }) => Promise<void>
+  signup: (name: string, email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string) => Promise<boolean>
+  googleLogin: (idToken: string, user: { email: string; name: string; photoURL?: string }) => Promise<boolean>
   logout: () => Promise<void>
   me: () => Promise<void>
 }
