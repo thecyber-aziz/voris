@@ -5,6 +5,7 @@ import InputBox from '../components/InputBox'
 import LoginPopup from '../components/PopupLogin'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { useChatStore } from '../context/useChat'
+import { useAuth } from '../context/useAuth'
 import { defaultModel } from '../constants/models'
 import { Logo } from '../components/Logo'
 
@@ -12,6 +13,7 @@ export default function ChatScreen() {
   const [inputValue, setInputValue] = useState('')
   const [model, setModel] = useLocalStorage('model', defaultModel)
   const { chats, streaming, newChatId, sendMessage, loadChat } = useChatStore()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const { id } = useParams()
 
@@ -66,6 +68,13 @@ export default function ChatScreen() {
             <MessageBubble key={i} messages={m} isStreaming={streaming && i === messages.length - 1} />
           ))}
           {streaming && <span className='animate-pulse'><Logo /></span> }
+        </div>
+      )}
+
+      {user && (
+        <div className="w-full max-w-3xl flex justify-center items-center gap-2 md:gap-3 px-2 md:px-4 py-3 md:py-6 mb-2 md:mb-4 font-[ClashDisplay]">
+          <Logo />
+          <span className="text-lg md:text-3xl font-semibold text-black">Welcome, <span className="text-black">{user.name}</span></span>
         </div>
       )}
 

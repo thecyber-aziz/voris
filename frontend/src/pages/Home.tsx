@@ -11,17 +11,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-50/30 dark:from-emerald-950/20 dark:via-slate-950 dark:to-teal-950/20 font-['ClashDisplay'] overflow-x-hidden">
+    <div className="min-h-screen bg-white  font-['ClashDisplay'] overflow-x-hidden">
       {/* Animated linear blob with linear linear */}
       <div 
         className="fixed inset-0 pointer-events-none overflow-hidden"
-        style={{background: `linear-linear(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.04) 50%, transparent 80%)`}}
+        
       />
       
       <div className="relative mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
         {/* Nav */}
-        <nav className="flex items-center justify-between px-6 py-6 border-b border-emerald-200/50 dark:border-emerald-800/30 backdrop-blur-sm bg-white/50 dark:bg-slate-950/50 sticky top-0 z-10">
+        <nav className="flex items-center justify-between px-6 py-6 border-b  sticky top-0 z-10">
           <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/')}>
             <LogoWithText />
           </div>
@@ -42,12 +42,12 @@ export default function Home() {
 
         {/* Hero */}
         <section className="text-center py-16 md:py-24">
-          <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 rounded-full px-4 py-1.5 text-sm text-emerald-700 dark:text-emerald-300 mb-6 backdrop-blur-sm animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 bg-emerald-50  border border-emerald-200 dark:border-emerald-800/50 rounded-full px-4 py-1.5 text-sm text-emerald-700 dark:text-emerald-300 mb-6 backdrop-blur-sm animate-fade-in-up">
             <Zap size={12} className="fill-emerald-500" /> 
             <span className="font-medium">Always available, always listening</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-1" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tight mb-6 bg-linear-to-br from-emerald-800 via-emerald-700 to-green-600 dark:from-emerald-200 dark:via-emerald-300 dark:to-green-400 bg-clip-text text-transparent animate-fade-in-up animation-delay-100">
+          <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tight mb-6 bg-linear-to-br  via-emerald-700 to-green-600  dark:to-green-400 bg-clip-text text-transparent animate-fade-in-up animation-delay-100">
             Your AI companion<br />for every conversation
           </h1>
           <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200">
@@ -61,7 +61,7 @@ export default function Home() {
             >
               <MessageCircle size={16} /> New conversation <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="flex items-center gap-2 border-2 border-emerald-200 dark:border-emerald-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-7 py-3.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all duration-300">
+            <button className="flex items-center gap-2 border-2 border-emerald-200 dark:border-emerald-800  backdrop-blur-sm px-7 py-3.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all duration-300">
               <Feather size={16} /> See how it works
             </button>
           </div>
@@ -85,7 +85,7 @@ export default function Home() {
         <section id="features" className="mb-24 scroll-mt-20">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold tracking-wider uppercase text-emerald-600 dark:text-emerald-400 mb-3">Capabilities</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100">What Sera can do</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100">What Voris can do</h2>
             <p className="text-slate-500 dark:text-slate-400 mt-3 max-w-md mx-auto">Powered by advanced AI, designed for real conversations</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -116,7 +116,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { n: 1, title: 'Start a conversation', desc: 'Click "New conversation" and type whatever is on your mind. No setup required.', icon: <MessageCircle size={24} /> },
-              { n: 2, title: 'Sera responds instantly', desc: 'Get clear, thoughtful responses that understand context and nuance.', icon: <Bot size={24} /> },
+              { n: 2, title: 'Voris responds instantly', desc: 'Get clear, thoughtful responses that understand context and nuance.', icon: <Bot size={24} /> },
               { n: 3, title: 'Continue the thread', desc: 'Follow up, refine, or switch topics. Your chat history is always saved.', icon: <Cpu size={24} /> },
             ].map(({ n, title, desc, icon }) => (
               <div key={n} className="relative text-center p-6 rounded-2xl border border-emerald-200/50 dark:border-emerald-800/30 bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm">
@@ -147,7 +147,7 @@ export default function Home() {
                 onClick={handleContinue}
                 className="cursor-pointer group inline-flex items-center gap-2 bg-white text-emerald-600 px-7 py-3.5 rounded-xl text-sm font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
-                Open Sera <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                Open Voris <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>

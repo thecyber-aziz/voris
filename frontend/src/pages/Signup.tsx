@@ -5,6 +5,11 @@ import { MessageCircle } from "lucide-react"
 import { signInWithPopup } from "firebase/auth"
 import { auth, googleProvider } from "../config/firebase"
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 export default function Signup() {
   const { signup, googleLogin, loading } = useAuth()
   const navigate = useNavigate()
@@ -12,9 +17,47 @@ export default function Signup() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>({})
+
+  const validateForm = (): boolean => {
+    const newErrors: { name?: string; email?: string; password?: string } = {}
+
+    if (!name) {
+      newErrors.name = "Name is required"
+    } else if (name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
+    }
+
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!isValidEmail(email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSignup = async () => {
-    await signup(name, email, password)
+    if (!validateForm()) return
+
+    try {
+      const result = await signup(name, email, password)
+      if (result?.success) {
+        navigate('/chat')
+      } else if (result?.message) {
+        setErrors({ general: result.message })
+      }
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Signup failed'
+      setErrors({ general: errorMessage })
+    }
   }
 
   const handleGoogleSignup = async () => {
@@ -23,13 +66,18 @@ export default function Signup() {
       const user = result.user
       const idToken = await user.getIdToken()
       
-      await googleLogin(idToken, {
+      const response = await googleLogin(idToken, {
         email: user.email || "",
         name: user.displayName || user.email || "",
         photoURL: user.photoURL || undefined
       })
+      
+      if (response?.success) {
+        navigate('/chat')
+      }
     } catch (error) {
       console.log("Google signup error:", error)
+      setErrors({ general: 'Google signup failed' })
     }
   }
 
@@ -39,29 +87,49 @@ export default function Signup() {
 
         <h2 className="text-xl font-bold font-[ClashDisplay] text-black">Signup</h2>
 
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-        />
+        {errors.general && <p className="text-sm text-red-500">{errors.general}</p>}
 
-        <input 
-          type="email"
-          placeholder="Enter you email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-        />
+        <div>
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value)
+              if (errors.name) setErrors({ ...errors, name: undefined, general: undefined })
+            }}
+            className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+          />
+          {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+        </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-        />
+        <div>
+          <input 
+            type="email"
+            placeholder="Enter you email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              if (errors.email) setErrors({ ...errors, email: undefined, general: undefined })
+            }}
+            className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+          />
+          {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+        </div>
+
+        <div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              if (errors.password) setErrors({ ...errors, password: undefined, general: undefined })
+            }}
+            className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+          />
+          {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+        </div>
 
         <button
           onClick={handleSignup}
@@ -88,7 +156,7 @@ export default function Signup() {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          {loading ? "Signing up..." : "Sign up with Google"}
+          {loading ? "Signing up..." : "Continue with Google"}
         </button>
 
 

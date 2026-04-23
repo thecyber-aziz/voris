@@ -2,6 +2,7 @@ export type Messages = {
   role: "user" | "model"
   content: string
   type?: "error"
+  image?: string // Base64 encoded image or image URL
 }
 
 export type Chat = {

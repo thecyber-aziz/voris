@@ -34,7 +34,7 @@ export default function LoginPopup() {
         {isLoginBoxOpen && 
           <div className="w-full max-w-md bg-white rounded-xl shadow-md p-4 flex flex-col gap-4">
 
-            <h2 className="text-xl font-bold font-[ClashDisplay] text-green-700">Login</h2>
+            <h2 className="text-xl font-bold font-[ClashDisplay] text-black">Login</h2>
 
             <input 
               type="email"

@@ -1,8 +1,18 @@
 import { useEffect, useRef } from 'react'
+import { Image } from 'lucide-react'
 import { MODELS } from '../constants/models'
 
 export default function InputBox({ inputValue, setInputValue, handleSend, handleAbort, model, setModel, activeMessages, isLoading }: any) {
   const ref = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      console.log('Selected file:', file)
+      // Add your photo upload logic here
+    }
+  }
 
   useEffect(() => {
     if (!ref.current) return
@@ -15,28 +25,47 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
       ${activeMessages.length ? 'bottom-0' : 'top-1/2 -translate-y-1/2'}
     `}>
       <div className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
-        <textarea 
-          ref={ref}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => {
-            const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent)
-            if (e.key === 'Enter' && !e.shiftKey && !isMobile) {
-              e.preventDefault()
-              handleSend()
-            }
-          }}
-          placeholder="How can I help you?"
-          rows={1}
-          className="w-full focus:outline-none resize-none overflow-y-scroll overflow-hidden font-light"
+        <div className="flex items-end gap-2">
+          {/* Textarea */}
+          <div className="flex-1">
+            <textarea 
+              ref={ref}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent)
+                if (e.key === 'Enter' && !e.shiftKey && !isMobile) {
+                  e.preventDefault()
+                  handleSend()
+                }
+              }}
+              placeholder="How can I help you?"
+              rows={1}
+              className="w-full focus:outline-none resize-none overflow-y-scroll overflow-hidden font-light"
+            />
+          </div>
+        </div>
+
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoUpload}
+          className="hidden"
         />
 
-        <div className="mt-3 flex items-center justify-end gap-2">
-          {/* <div className="relative group flex items-center gap-2 px-2 py-1 text-xs text-gray-500 border border-gray-200 rounded-lg p-0.5 focus:outline-none cursor-pointer">
-            <img src="pfp.png" alt="pfp" className="w-5 h-5 rounded-full"/>
-            <span className='tooltip'>Search About Developer.</span>
-          </div> */}
+        <div className="mt-3 flex items-center justify-between gap-2">
+          {/* Photo Upload Button - Left Side */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-700 flex-shrink-0"
+            title="Upload photo"
+          >
+            <Image strokeWidth={1.5} size={20} />
+          </button>
 
+          {/* Model Selector and Send Button - Right Side */}
           <div className='flex items-center gap-2'>
             <select
               value={model}

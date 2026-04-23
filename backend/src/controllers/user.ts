@@ -89,12 +89,16 @@ export const googleLogin = async (req: Request, res: Response) => {
         name: name || email,
         email,
         password: null, // Google users don't need a password
-        profilePhoto: profilePhoto || undefined // Store Google profile photo
+        profilePhoto: profilePhoto || undefined, // Store Google profile photo
+        lastLogin: new Date()
       });
       await user.save();
-    } else if (profilePhoto && !user.profilePhoto) {
-      // Update profile photo if user exists but doesn't have one
-      user.profilePhoto = profilePhoto;
+    } else {
+      // Update existing user
+      if (profilePhoto && !user.profilePhoto) {
+        user.profilePhoto = profilePhoto;
+      }
+      user.lastLogin = new Date();
       await user.save();
     }
 
@@ -129,15 +133,29 @@ export const logout = (req: Request, res: Response) => {
 };
 
 // isAuth
-export const isAuthme = (req: Request, res: Response) => {
+export const isAuthme = async (req: Request, res: Response) => {
   const token = req.cookies?.token;
   if (!token) return res.status(401).json({ success: false, message: 'token is missing', loggedIn: false });
 
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET!);
-    if (!user) return res.status(401).json({ success: false, message: 'token is invalid', loggedIn: false });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    if (!decoded) return res.status(401).json({ success: false, message: 'token is invalid', loggedIn: false });
   
-    res.status(200).json({ success: true, message: 'token is valid', loggedIn: true, user });
+    // Fetch the full user data from MongoDB
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(401).json({ success: false, message: 'user not found', loggedIn: false });
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'token is valid', 
+      loggedIn: true, 
+      user: { 
+        _id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        profilePhoto: user.profilePhoto 
+      }
+    });
   } catch {
     res.status(401).json({ success: false, message: 'token is invalid', loggedIn: false });
   }

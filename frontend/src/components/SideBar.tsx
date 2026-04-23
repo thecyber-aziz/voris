@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { LogoWithText } from './Logo'
-import { Plus, Settings, Trash, PencilLine, Save, Columns2, Square, KeyRound, LogOut, MoreHorizontal, CheckCircle } from 'lucide-react'
+import { Plus, Settings, Trash, PencilLine, Save, Columns2, Square, KeyRound, LogOut, MoreHorizontal, CheckCircle, Search, X } from 'lucide-react'
 import { useChatStore } from '../context/useChat'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Dialog from './Dialog'
@@ -12,6 +12,7 @@ export default function SideBar() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [titleDraft, setTitleDraft] = useState('')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
   const menuRef = useRef<HTMLDivElement>(null)
 
   const { chats, deleteChat, renameChat } = useChatStore()
@@ -66,7 +67,7 @@ export default function SideBar() {
 
         <div className='flex-1 hidden md:block' />
 
-        {!user && <span onClick={() => navigate('/login')} className='flex flex-col items-start px-2 py-px rounded border border-gray-600 cursor-pointer'>Login</span>}
+        {!user && <span onClick={() => navigate('/login')} className='flex flex-col items-start bg-white px-2 py-0.75 rounded-sm shadow-sm font-light cursor-pointer'>Login</span>}
       </div>
 
       {/* Sidebar */}
@@ -101,10 +102,32 @@ export default function SideBar() {
         </div>
 
         {/* Chat History */}
-        <div className="flex-1 overflow-y-auto" ref={menuRef}>
+        <div className="flex-1 overflow-y-auto flex flex-col" ref={menuRef}>
+          {/* Search Bar */}
+          <div className='px-2 py-2'>
+            <div className='relative flex items-center bg-white border border-gray-300 rounded-lg px-3 py-2 focus-within:border-gray-400 focus-within:shadow-sm transition-all'>
+              <Search strokeWidth={1.5} size={18} className='text-gray-400 shrink-0' />
+              <input
+                type='text'
+                placeholder='Search chats...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className='flex-1 ml-2 bg-transparent outline-none text-sm text-gray-900 placeholder-gray-400'
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className='p-1 hover:bg-gray-100 rounded transition-colors'
+                >
+                  <X strokeWidth={1.5} size={16} className='text-gray-400' />
+                </button>
+              )}
+            </div>
+          </div>
+
           <p className='text-xs font-light text-gray-700 px-2 mb-1'>Recent</p>
 
-          {chats.map((chat) => (
+          {chats.filter((chat) => chat.title.toLowerCase().includes(searchQuery.toLowerCase())).map((chat) => (
             <div
               key={chat._id}
               className={`relative flex items-center gap-1 text-sm rounded group

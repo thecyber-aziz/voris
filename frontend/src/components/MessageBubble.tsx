@@ -21,7 +21,7 @@ function MessageBubble( { messages, isStreaming } : Props) {
   useEffect(() => {
     if (!bottomRef.current) return
     bottomRef.current.scrollIntoView({ behavior: isStreaming ? 'smooth' : 'auto',})
-  }, [messages.content, isStreaming])
+  }, [messages.content, messages.image, isStreaming])
   
   const handleCopy = async () => {
     try {
@@ -36,7 +36,18 @@ function MessageBubble( { messages, isStreaming } : Props) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} my-2`}>
       
-      {isUser && <p className="max-w-[75%] text-sm bg-gray-50 border border-gray-200 text-black px-4 py-2 rounded-xl shadow-xs">{messages.content}</p>}
+      {isUser && (
+        <div className="max-w-[75%] flex flex-col gap-2 items-end">
+          {messages.image && (
+            <div className="rounded-xl overflow-hidden border border-gray-300 shadow-sm max-w-xs">
+              <img src={messages.image} alt="User uploaded" className="max-w-full h-auto" />
+            </div>
+          )}
+          {messages.content && (
+            <p className="text-sm bg-gray-50 border border-gray-200 text-black px-4 py-2 rounded-xl shadow-xs">{messages.content}</p>
+          )}
+        </div>
+      )}
       {isError && <p className="w-fit px-4 py-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">{messages.content}</p>}
 
       {!isUser && !isError && (
