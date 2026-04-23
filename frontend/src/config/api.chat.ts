@@ -40,6 +40,7 @@ export const genAiResponse = async (
     const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/chat/genAiResponse`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ message, history, model, systemPrompt, apiKey }),
       signal
     });

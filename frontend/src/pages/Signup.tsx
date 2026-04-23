@@ -49,6 +49,8 @@ export default function Signup() {
     const success = await signup(name, email, password)
     if (success) {
       navigate('/chat')
+    } else {
+      setErrors({ general: 'Signup failed. Please try again.' })
     }
   }
 
@@ -88,7 +90,11 @@ export default function Signup() {
             value={name}
             onChange={(e) => {
               setName(e.target.value)
-              if (errors.name) setErrors({ ...errors, name: undefined, general: undefined })
+              if (errors.name) {
+                const newErrors = { ...errors }
+                delete newErrors.name
+                setErrors(newErrors)
+              }
             }}
             className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
           />
@@ -102,7 +108,11 @@ export default function Signup() {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value)
-              if (errors.email) setErrors({ ...errors, email: undefined, general: undefined })
+              if (errors.email) {
+                const newErrors = { ...errors }
+                delete newErrors.email
+                setErrors(newErrors)
+              }
             }}
             className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
           />
@@ -116,7 +126,11 @@ export default function Signup() {
             value={password}
             onChange={(e) => {
               setPassword(e.target.value)
-              if (errors.password) setErrors({ ...errors, password: undefined, general: undefined })
+              if (errors.password) {
+                const newErrors = { ...errors }
+                delete newErrors.password
+                setErrors(newErrors)
+              }
             }}
             className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
           />
@@ -140,7 +154,7 @@ export default function Signup() {
         <button
           onClick={handleGoogleSignup}
           disabled={loading}
-          className="w-full bg-black border border-gray-200 text-white rounded-xl p-2.5 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-"
+          className="w-full bg-black border border-gray-200 text-white rounded-xl p-2.5 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-gray-900"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

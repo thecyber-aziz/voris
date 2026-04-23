@@ -14,12 +14,14 @@ export default function App() {
   const hasVisited = localStorage.getItem("hasVisited")
 
   useEffect(() => {
-    me().then(() => {
+    const initializeApp = async () => {
+      await me()
       const user = useAuth.getState().user
       if (!user && !localStorage.getItem('guestId')) {
         localStorage.setItem('guestId', crypto.randomUUID())
       }
-    })
+    }
+    initializeApp()
   }, [])
   
   if (loading) return null  // loading

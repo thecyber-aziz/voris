@@ -2,23 +2,81 @@ import { useEffect, useState } from "react"
 import { useAuth } from "../context/useAuth"
 import { MessageCircle } from "lucide-react"
 
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 export default function LoginPopup() {
   const { login, signup, loading } = useAuth()
   
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>({})
 
   const [isAlertBoxOpen, isSetAlertBoxOpen] = useState(false)
   const [isLoginBoxOpen, setIsLoginBoxOpen] = useState(true)
   const isLoginPopupClosed = localStorage.getItem("isAlertClosed")
 
+  const validateLoginForm = (): boolean => {
+    const newErrors: { email?: string; password?: string } = {}
+
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!isValidEmail(email)) {
+      newErrors.email = "Invalid email format"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const validateSignupForm = (): boolean => {
+    const newErrors: { name?: string; email?: string; password?: string } = {}
+
+    if (!name) {
+      newErrors.name = "Name is required"
+    } else if (name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
+    }
+
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!isValidEmail(email)) {
+      newErrors.email = "Invalid email format"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleLogin = async () => {
-    await login(email, password)
+    if (!validateLoginForm()) return
+    const success = await login(email, password)
+    if (!success) {
+      setErrors({ general: 'Login failed. Please check your credentials.' })
+    }
   }
 
   const handleSignup = async () => {
-    await signup(name, email, password)
+    if (!validateSignupForm()) return
+    const success = await signup(name, email, password)
+    if (!success) {
+      setErrors({ general: 'Signup failed. Please try again.' })
+    }
   }
   
   useEffect(() => {
@@ -36,21 +94,43 @@ export default function LoginPopup() {
 
             <h2 className="text-xl font-bold font-[ClashDisplay] text-black">Login</h2>
 
-            <input 
-              type="email"
-              placeholder="Enter you email e.g bbs@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-            />
+            {errors.general && <p className="text-sm text-red-500">{errors.general}</p>}
 
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-            />
+            <div>
+              <input 
+                type="email"
+                placeholder="Enter you email e.g bbs@example.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  if (errors.email) {
+                    const newErrors = { ...errors }
+                    delete newErrors.email
+                    setErrors(newErrors)
+                  }
+                }}
+                className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+              />
+              {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+            </div>
+
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  if (errors.password) {
+                    const newErrors = { ...errors }
+                    delete newErrors.password
+                    setErrors(newErrors)
+                  }
+                }}
+                className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+              />
+              {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+            </div>
 
             <button
               onClick={handleLogin}
@@ -62,7 +142,12 @@ export default function LoginPopup() {
 
             <p className="text-xs text-gray-500 text-center">
               Don’t have an account?{" "}
-              <span className="text-black cursor-pointer" onClick={() => setIsLoginBoxOpen(false)}>Signup</span>
+              <span className="text-black cursor-pointer" onClick={() => { 
+                setIsLoginBoxOpen(false)
+                setErrors({})
+                setEmail('')
+                setPassword('')
+              }}>Signup</span>
             </p>
           </div>
         }
@@ -72,29 +157,61 @@ export default function LoginPopup() {
 
           <h2 className="text-xl font-bold font-[ClashDisplay] text-black">Signup</h2>
 
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-          />
+          {errors.general && <p className="text-sm text-red-500">{errors.general}</p>}
 
-          <input 
-            type="email"
-            placeholder="Enter you email e.g bbs@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-          />
+          <div>
+            <input
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value)
+                if (errors.name) {
+                  const newErrors = { ...errors }
+                  delete newErrors.name
+                  setErrors(newErrors)
+                }
+              }}
+              className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+            />
+            {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
-          />
+          <div>
+            <input 
+              type="email"
+              placeholder="Enter you email e.g bbs@example.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                if (errors.email) {
+                  const newErrors = { ...errors }
+                  delete newErrors.email
+                  setErrors(newErrors)
+                }
+              }}
+              className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+            />
+            {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+          </div>
+
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                if (errors.password) {
+                  const newErrors = { ...errors }
+                  delete newErrors.password
+                  setErrors(newErrors)
+                }
+              }}
+              className="w-full text-sm bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-1 focus:ring-black"
+            />
+            {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+          </div>
 
           <button
             onClick={handleSignup}
@@ -106,7 +223,13 @@ export default function LoginPopup() {
 
           <p className="text-xs text-gray-500 text-center">
             Already have an account?{" "}
-            <span className="text-black cursor-pointer" onClick={() => setIsLoginBoxOpen(true)}>Login</span>
+            <span className="text-black cursor-pointer" onClick={() => { 
+              setIsLoginBoxOpen(true)
+              setErrors({})
+              setName('')
+              setEmail('')
+              setPassword('')
+            }}>Login</span>
           </p>
         </div>
         }

@@ -25,7 +25,8 @@ export type ChatStore = {
     apiKey: string, 
     systemPrompt: string, 
     currentChatId: string | null, 
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    image?: string
   ) => Promise<void>
 
   loadChat: () => void

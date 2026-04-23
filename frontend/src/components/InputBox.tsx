@@ -1,17 +1,42 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Image } from 'lucide-react'
 import { MODELS } from '../constants/models'
 
 export default function InputBox({ inputValue, setInputValue, handleSend, handleAbort, model, setModel, activeMessages, isLoading }: any) {
   const ref = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [hasImage, setHasImage] = useState(false)
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      console.log('Selected file:', file)
-      // Add your photo upload logic here
+      // Check file size (max 5MB)
+      const maxSizeInBytes = 5 * 1024 * 1024
+      if (file.size > maxSizeInBytes) {
+        alert('Image size must be less than 5MB')
+        return
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file')
+        return
+      }
+
+      // Convert to base64
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const base64Image = event.target?.result as string
+        // Store in a temporary state or directly add to message
+        // For now, we'll prepend it to the input as a way to send with the next message
+        sessionStorage.setItem('pendingImage', base64Image)
+        setHasImage(true)
+        console.log('Image uploaded and ready to send')
+      }
+      reader.readAsDataURL(file)
     }
+    // Reset input
+    e.target.value = ''
   }
 
   useEffect(() => {
@@ -19,6 +44,18 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
     ref.current.style.height = 'auto'
     ref.current.style.height = Math.min(ref.current.scrollHeight, 10 * 24) + 'px'
   }, [inputValue])
+
+  // Monitor for image sent and clear the hasImage state
+  useEffect(() => {
+    const checkImage = () => {
+      const pendingImage = sessionStorage.getItem('pendingImage')
+      if (!pendingImage && hasImage) {
+        setHasImage(false)
+      }
+    }
+    const interval = setInterval(checkImage, 100)
+    return () => clearInterval(interval)
+  }, [hasImage])
 
   return (
     <div className={`fixed z-10 w-full max-w-3xl px-4 md:p-0 transition-all duration-300
@@ -45,6 +82,14 @@ export default function InputBox({ inputValue, setInputValue, handleSend, handle
             />
           </div>
         </div>
+
+        {/* Image Preview */}
+        {hasImage && (
+          <div className="mt-2 text-xs text-green-600 flex items-center gap-2">
+            <Image size={14} />
+            Image ready to send
+          </div>
+        )}
 
         {/* Hidden File Input */}
         <input

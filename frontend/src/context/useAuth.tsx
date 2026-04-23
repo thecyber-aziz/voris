@@ -39,6 +39,9 @@ export const useAuth = create<AuthState>((set) => ({
     const data = await logout();
     if(!data) return
     set({ user: null })
+    // Clear authentication and chat-related localStorage
+    localStorage.removeItem('guestChats')
+    localStorage.removeItem('guestId')
     useChatStore.getState().loadChat()
   },
 

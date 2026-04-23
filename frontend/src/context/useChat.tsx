@@ -17,7 +17,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   streaming: false,
   newChatId: null,  // ← set when new chat created, ChatScreen watches and navigates
 
-  sendMessage: async (message, guestId, model, apiKey, systemPrompt, currentChatId, signal) => {
+  sendMessage: async (message, guestId, model, apiKey, systemPrompt, currentChatId, signal, image) => {
     let chat = get().chats.find(c => c._id === currentChatId) ?? null
 
     // 1. create chat if new
@@ -36,7 +36,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       streaming: true,
       chats: s.chats.map(c =>
         c._id === chatId
-          ? { ...c, messages: [...c.messages, { role: "user", content: message }, { role: "model", content: "" }] }
+          ? { ...c, messages: [...c.messages, { role: "user", content: message, image }, { role: "model", content: "" }] }
           : c
       )
     }))

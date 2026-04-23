@@ -38,6 +38,7 @@ export default function ChatScreen() {
     if (!inputValue.trim() || streaming) return
 
     const message = inputValue
+    const pendingImage = sessionStorage.getItem('pendingImage')
     setInputValue('')
 
     controllerRef.current?.abort()
@@ -47,6 +48,7 @@ export default function ChatScreen() {
     const apiKey = localStorage.getItem('apiKey') ?? ''
     const systemPrompt = localStorage.getItem('systemPrompt') ?? ''
 
+    // Pass image data to sendMessage
     await sendMessage(
       message,
       guestId,
@@ -54,8 +56,12 @@ export default function ChatScreen() {
       apiKey,
       systemPrompt,
       id ?? null,     // if no id, create new
-      controllerRef.current.signal
+      controllerRef.current.signal,
+      pendingImage ?? undefined
     )
+
+    // Clear the pending image after sending
+    sessionStorage.removeItem('pendingImage')
   }
 
   const handleAbort = () => controllerRef.current?.abort()
@@ -87,6 +93,7 @@ export default function ChatScreen() {
         setModel={setModel}
         activeMessages={messages}
         isLoading={streaming}
+        onImageSent={() => {}}
       />
 
       <LoginPopup />

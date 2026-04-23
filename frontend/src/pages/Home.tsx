@@ -51,7 +51,7 @@ export default function Home() {
             Your AI companion<br />for every conversation
           </h1>
           <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200">
-            Sera helps you think, write, and explore ideas — naturally, through conversation. 
+            Voris helps you think, write, and explore ideas — naturally, through conversation. 
             <span className="block text-emerald-600 dark:text-emerald-400 font-medium mt-1">No prompts needed, just talk.</span>
           </p>
           <div className="flex gap-4 justify-center flex-wrap animate-fade-in-up animation-delay-300">
