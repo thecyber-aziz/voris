@@ -1,23 +1,30 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema({
-  name: {type: String},
-  email: {type: String, required: true, unique: true},
-  password: {type: String, required: false}, // Optional for Google users
-  profilePhoto: {type: String, required: false}, // User's profile picture URL
-  googleUID: {type: String, required: false}, // Google UID for future reference
-  lastLogin: {type: Date, default: Date.now}
+// ✅ Interface add kiya — TypeScript ko types pata chalenge
+export interface IUser extends Document {
+  name?: string;
+  email: string;
+  password?: string | null;
+  profilePhoto?: string;
+  googleUID?: string;
+  lastLogin?: Date;
+}
 
-}, {timestamps: true, versionKey: false})
+const userSchema = new mongoose.Schema<IUser>({
+  name: { type: String },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: false, default: null }, // ✅ null default
+  profilePhoto: { type: String, required: false },
+  googleUID: { type: String, required: false },
+  lastLogin: { type: Date, default: Date.now }
+}, { timestamps: true, versionKey: false })
 
-userSchema.pre('save', async function() {
-  // Only hash password if it exists and has been modified
+// ✅ 'this' ko IUser type diya — TypeScript error fix
+userSchema.pre('save', async function(this: IUser) {
   if (!this.password || !this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-const User = mongoose.model('user', userSchema);
+const User = mongoose.model<IUser>('user', userSchema);
 export default User;
-
-
