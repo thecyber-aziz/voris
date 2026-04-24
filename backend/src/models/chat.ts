@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { de } from 'zod/locales';
+import { z } from "zod"
 
 const chatSchema = new mongoose.Schema({
   userId: {type: String},

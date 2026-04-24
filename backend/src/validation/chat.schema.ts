@@ -1,4 +1,4 @@
-import { de } from 'zod/locales';
+
 import { z } from "zod";
 
 export const chatSchema = z.object({

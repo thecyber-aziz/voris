@@ -2,11 +2,14 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": false,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["src", "express.d.ts", "src/middleware"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
