@@ -12,7 +12,7 @@ connectDd();
 app.use(express.json());
 app.use(cookieParse())
 
-const allowed = ["http://localhost:5173","https://sera-blue.vercel.app"];
+const allowed = ["http://localhost:5173","https://voris-ai.vercel.app"];
 app.use(cors({
   origin: (o, cb) => cb(null, !o || allowed.includes(o)),
   credentials: true
