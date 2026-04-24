@@ -21,8 +21,8 @@ export const signup = async (req: Request, res: Response) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // ✅ production me true
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ cross-site ke liye
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
     .status(200).json({ success: true, message: 'user created successfully', user});
@@ -41,21 +41,22 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ email })
     if(!user) return res.status(400).json({success: false, message: 'User not exist'})
     
-    // ✅ Google users ke liye password null hoga
     if (!user.password) return res.status(400).json({ 
       success: false, 
       message: 'This email is registered with Google. Please use Google login.' 
     })
-    
-    const isMatch = await bcrypt.compare(password, user.password as string) // ✅ fix
+
+    // ✅ FIX — string mein convert karo pehle, phir compare karo
+    const userPassword: string = user.password
+    const isMatch = await bcrypt.compare(password, userPassword)
     if(!isMatch) return res.status(400).json({success: false, message: 'User password is incorrect'})
   
     const token = jwt.sign({id: user._id}, process.env.JWT_SECRET as string, { expiresIn: '7d' })
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // ✅ fix
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ fix
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
     .status(200).json({ success: true, message: 'user logged in successfully', user});
@@ -103,12 +104,12 @@ export const googleLogin = async (req: Request, res: Response) => {
       await user.save();
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: '7d' }); // ✅ fix
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // ✅ fix
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ fix
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
     .status(200).json({ 
@@ -136,8 +137,8 @@ export const googleLogin = async (req: Request, res: Response) => {
 export const logout = (req: Request, res: Response) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // ✅ fix
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ fix
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
   }).json({ success: true, message: 'Logged out successfully'});
 };
 
@@ -147,7 +148,7 @@ export const isAuthme = async (req: Request, res: Response) => {
   if (!token) return res.status(401).json({ success: false, message: 'token is missing', loggedIn: false });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any; // ✅ fix
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
     if (!decoded) return res.status(401).json({ success: false, message: 'token is invalid', loggedIn: false });
   
     const user = await User.findById(decoded.id);
