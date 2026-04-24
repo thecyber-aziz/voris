@@ -17,15 +17,15 @@ export const signup = async (req: Request, res: Response) => {
     
     if(!user) return res.status(400).json({success: false, message: 'User not created'})
     
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET!, { expiresIn: '7d' })
+    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET as string, { expiresIn: '7d' })
 
     res.cookie('token', token, {
-      httpOnly: true,        // JS can't access → prevents XSS
-      secure: false,         // true in production (HTTPS)
-      sameSite: 'strict',    // CSRF protection
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // ✅ production me true
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ cross-site ke liye
+      maxAge: 7 * 24 * 60 * 60 * 1000
     })
-    .status(200).json({ success: true, message: 'user creates successfully', user});
+    .status(200).json({ success: true, message: 'user created successfully', user});
   } catch (error:any) {
     return res.status(500).json({success: false, message: 'something went wrong', error: error.message})
   }
@@ -41,16 +41,22 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ email })
     if(!user) return res.status(400).json({success: false, message: 'User not exist'})
     
-    const isMatch = await bcrypt.compare(password, user.password)
-    if(!isMatch) return res.status(400).json({success: false, message: 'user password is incorrect'})
+    // ✅ Google users ke liye password null hoga
+    if (!user.password) return res.status(400).json({ 
+      success: false, 
+      message: 'This email is registered with Google. Please use Google login.' 
+    })
+    
+    const isMatch = await bcrypt.compare(password, user.password as string) // ✅ fix
+    if(!isMatch) return res.status(400).json({success: false, message: 'User password is incorrect'})
   
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET!, { expiresIn: '7d' })
+    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET as string, { expiresIn: '7d' })
 
     res.cookie('token', token, {
-      httpOnly: true,        // JS can't access → prevents XSS
-      secure: false,         // true in production (HTTPS)
-      sameSite: 'strict',    // CSRF protection
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // ✅ fix
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ fix
+      maxAge: 7 * 24 * 60 * 60 * 1000
     })
     .status(200).json({ success: true, message: 'user logged in successfully', user});
 
@@ -68,7 +74,6 @@ export const googleLogin = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: "Missing required fields (idToken, email)" });
     }
 
-    // Try to verify Firebase ID token if initialized, otherwise skip verification for dev
     if (firebaseInitialized) {
       try {
         await admin.auth().verifyIdToken(idToken);
@@ -76,25 +81,21 @@ export const googleLogin = async (req: Request, res: Response) => {
         return res.status(401).json({ success: false, message: "Invalid Firebase token" });
       }
     } else {
-      // For development only - when Firebase isn't fully configured
       console.warn('Firebase not initialized - skipping token verification. Only use in development!');
     }
     
-    // Check if user exists
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Create new user with Google account (no password)
       user = new User({
         name: name || email,
         email,
-        password: null, // Google users don't need a password
-        profilePhoto: profilePhoto || undefined, // Store Google profile photo
+        password: null,
+        profilePhoto: profilePhoto || undefined,
         lastLogin: new Date()
       });
       await user.save();
     } else {
-      // Update existing user
       if (profilePhoto && !user.profilePhoto) {
         user.profilePhoto = profilePhoto;
       }
@@ -102,19 +103,23 @@ export const googleLogin = async (req: Request, res: Response) => {
       await user.save();
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: '7d' }); // ✅ fix
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: false, // true in production (HTTPS)
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      secure: process.env.NODE_ENV === 'production', // ✅ fix
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ fix
+      maxAge: 7 * 24 * 60 * 60 * 1000
     })
     .status(200).json({ 
       success: true, 
       message: 'Google login successful', 
-      user: { _id: user._id, name: user.name, email: user.email, profilePhoto: user.profilePhoto }
+      user: { 
+        _id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        profilePhoto: user.profilePhoto 
+      }
     });
 
   } catch (error: any) {
@@ -129,7 +134,11 @@ export const googleLogin = async (req: Request, res: Response) => {
 
 // logout
 export const logout = (req: Request, res: Response) => {
-  res.clearCookie('token').json({ success: true, message: 'Logged out successfully'});
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // ✅ fix
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict', // ✅ fix
+  }).json({ success: true, message: 'Logged out successfully'});
 };
 
 // isAuth
@@ -138,10 +147,9 @@ export const isAuthme = async (req: Request, res: Response) => {
   if (!token) return res.status(401).json({ success: false, message: 'token is missing', loggedIn: false });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any; // ✅ fix
     if (!decoded) return res.status(401).json({ success: false, message: 'token is invalid', loggedIn: false });
   
-    // Fetch the full user data from MongoDB
     const user = await User.findById(decoded.id);
     if (!user) return res.status(401).json({ success: false, message: 'user not found', loggedIn: false });
 
